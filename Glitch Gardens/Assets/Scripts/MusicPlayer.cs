@@ -4,27 +4,33 @@ using System.Collections;
 
 public class MusicPlayer : MonoBehaviour {
 
-	public AudioClip[] levelMusicChangeArray;
+	public AudioClip[] levelMusicArray;
 
 	private AudioSource audioSource;
 
 	void Awake(){
 		GameObject.DontDestroyOnLoad(gameObject);
-		print ("Don't destroy on load: " + name);
 	}
 
 	void Start () {
+		// Find and get the AudioSource
 		audioSource = GetComponent<AudioSource> ();
+
+		// Event Registration
+		SceneManager.sceneLoaded -= OnSceneLoaded;
 		SceneManager.sceneLoaded += OnSceneLoaded;
 	}
 
 	void OnSceneLoaded (Scene scene, LoadSceneMode mode){
-		AudioClip currentLevelMusic = levelMusicChangeArray [scene.buildIndex];
-		print ("Playing Clip: " + currentLevelMusic);
-		if (currentLevelMusic) {
+		
+		AudioClip currentLevelMusic = levelMusicArray [scene.buildIndex];
+
+		if (currentLevelMusic != null) {
 			audioSource.clip = currentLevelMusic;
 			audioSource.loop = true;
 			audioSource.Play ();
+		} else {
+			print ("Level has no music specified. skipping");
 		}
 	}
 }
